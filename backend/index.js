@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./Confiq/db.js";
 import morgan from "morgan";
 import cors from "cors";
-
+import Routes from './Routes/index.js';
 
 
 dotenv.config();
@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
+
+app.use('/', Routes);
 
 app.get('/', (req, res) => {
   res.send("<h1>Welcome to VDG Fashion</h1>");
