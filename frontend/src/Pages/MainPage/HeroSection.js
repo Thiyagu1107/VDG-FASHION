@@ -37,10 +37,10 @@ const CarouselContainer = styled(Box)({
   padding: 0,
 });
 
-const CarouselContent = styled(Box)(({ numImages }) => ({
+const CarouselContent = styled(Box)(({ images }) => ({
   display: 'flex',
   transition: 'transform 0.5s ease-in-out',
-  width: `${numImages * 100}%`, 
+  width: `${images.length * 100}%`, // Use images.length instead of numimages
 }));
 
 const CarouselImage = styled('img')({
@@ -64,8 +64,8 @@ const Dot = styled(Box)(({ active }) => ({
   borderRadius: '50%',
   backgroundColor: active ? 'white' : 'rgba(255, 255, 255, 0.5)',
   transition: 'background-color 0.3s ease',
+  // Remove `active` prop from DOM element
 }));
-
 
 const Carousel = ({ images }) => {
   const containerRef = useRef(null);
@@ -88,19 +88,19 @@ const Carousel = ({ images }) => {
 
   return (
     <CarouselContainer>
-      <CarouselContent ref={containerRef} numImages={images.length}>
-        {images.map((image) => (
-          <Box key={image.id} sx={{ flex: '0 0 auto', width: '100%' }}>
-            <CarouselImage src={image.src} alt={`Image ${image.id}`} />
-          </Box>
-        ))}
-      </CarouselContent>
-      <DotContainer>
-        {images.map((_, index) => (
-          <Dot key={index} active={index === currentIndex} />
-        ))}
-      </DotContainer>
-    </CarouselContainer>
+    <CarouselContent ref={containerRef} images={images}>
+      {images.map((image) => (
+        <Box key={image.id} sx={{ flex: '0 0 auto', width: '100%' }}>
+          <CarouselImage src={image.src} alt={`Image ${image.id}`} />
+        </Box>
+      ))}
+    </CarouselContent>
+    <DotContainer>
+      {images.map((_, index) => (
+        <Dot key={index} active={index === currentIndex} />
+      ))}
+    </DotContainer>
+  </CarouselContainer>
   );
 };
 

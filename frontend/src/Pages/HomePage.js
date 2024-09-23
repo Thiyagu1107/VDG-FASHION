@@ -6,8 +6,6 @@ const HomePage = () => {
   return (
 <Layout> 
     <HeroSection />
-
-  
  </Layout>
   )
 }

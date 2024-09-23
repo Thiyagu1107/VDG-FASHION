@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    backgroundColor: theme.palette.background.default,
   },
   heading: {
     marginBottom: theme.spacing(2),

@@ -1,35 +1,31 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom'; 
+import { Link as RouterLink } from 'react-router-dom';
 import { Container, Typography, Button, Grid, Link } from '@mui/material';
-import { makeStyles } from '@mui/styles'; 
+import { styled } from '@mui/material/styles';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-  heading: {
-    marginBottom: theme.spacing(2),
-  },
-  button: {
-    marginTop: theme.spacing(2),
-  },
+const Root = styled(Container)(({ theme }) => ({
+  height: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+}));
+
+const Heading = styled(Typography)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(2),
 }));
 
 const PageNotFound = () => {
-  const classes = useStyles();
-
   return (
-    <Container maxWidth="sm" className={classes.root}>
+    <Root maxWidth="sm">
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12}>
-          <Typography variant="h1" className={classes.heading}>
-            404
-          </Typography>
+          <Heading variant="h1">404</Heading>
           <Typography variant="h5" gutterBottom>
             Oops! Page not found.
           </Typography>
@@ -37,15 +33,14 @@ const PageNotFound = () => {
             The page you are looking for might have been removed, had its name changed,
             or is temporarily unavailable.
           </Typography>
-          <Button
+          <StyledButton
             variant="contained"
             color="primary"
             component={RouterLink}
             to="/"
-            className={classes.button}
           >
             Go to Home
-          </Button>
+          </StyledButton>
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2">
@@ -54,7 +49,7 @@ const PageNotFound = () => {
           </Typography>
         </Grid>
       </Grid>
-    </Container>
+    </Root>
   );
 };
 
