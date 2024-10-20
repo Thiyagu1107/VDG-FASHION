@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/auth';
-import axios from "axios";
-import { Outlet } from "react-router-dom";
+import axios from 'axios';
+import { Outlet } from 'react-router-dom'; // Added Navigate for potential redirection
 import Spinner from '../../Utils/Spinner';
-
-
 
 export default function PrivateRoute() {
   const [ok, setOk] = useState(false);
@@ -16,9 +14,11 @@ export default function PrivateRoute() {
       try {
         const res = await axios.get(`${backendUrl}/auth/userdashboard`, {
           headers: {
-            Authorization: auth.token,
+            Authorization: auth?.token
           },
         });
+
+        // Check the response from the server
         if (res.data.ok) {
           setOk(true);
         } else {
@@ -33,9 +33,15 @@ export default function PrivateRoute() {
     // Check authentication only if auth.token is present
     if (auth?.token) {
       authCheck();
+    } else {
+      setOk(false); // If no token, set ok to false
     }
   }, [auth?.token, backendUrl]);
 
-  // Return the Outlet or Spinner based on the value of ok
-  return ok ? <Outlet /> : <Spinner />;
+  // If not authorized, you can redirect to a login page or show a spinner
+  if (!ok) {
+    return <Spinner />;
+  }
+
+  return <Outlet />;
 }

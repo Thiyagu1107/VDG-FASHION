@@ -8,6 +8,9 @@ import theme from './Styles/Theme/defaultTheme';
 import Dashboard from './Pages/Dashboard';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+
+
 const LoaderWrapper = styled('div')({
   position: 'fixed',
   top: 0,
@@ -33,13 +36,20 @@ const AdminDashboard = Loadable(React.lazy(() => import("./Pages/Admin/AdminDash
 const UserDashboard = Loadable(React.lazy(() => import("./Pages/User/UserDashboard")));
 const ForgotPassword = Loadable(React.lazy(() => import("./Pages/Auth/ForgotPassword")));
 const Register = Loadable(React.lazy(() => import("./Pages/Auth/Register")));
-const AdminProfile = Loadable(React.lazy(() => import('./Pages/Admin/Profile')));
+const CategoryManager = Loadable(React.lazy(() => import('./Pages/Admin/Category')));
 const UserProfile = Loadable(React.lazy(() => import('./Pages/User/Profile')));
 const HomePage = Loadable(React.lazy(() => import("./Pages/HomePage")));
 const PageNotFound = Loadable(React.lazy(() => import("./Pages/PageNotFound")));
+const Slider = Loadable(React.lazy(() => import("./Pages/Admin/Slider")));
+const SubcategoryManager = Loadable(React.lazy(() => import("./Pages/Admin/Subcategory")));
+const ProductManager = Loadable(React.lazy(() => import("./Pages/Admin/products")));
+
+const CreateProduct = Loadable(React.lazy(() => import("./Pages/Admin/CreateProduct")));
+const EditProduct = Loadable(React.lazy(() => import("./Pages/Admin/EditProduct")));
 
 function App() {
-  return (
+  return (  
+    <>
     <ThemeProvider theme={theme}>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -55,11 +65,17 @@ function App() {
         
         <Route path="/dashboard" element={<AdminRoute />}>
           <Route path="admin" element={<AdminDashboard />} />
-          <Route path="admin/profile" element={<AdminProfile />} />
+          <Route path="admin/slider" element={<Slider />} />
+          <Route path="admin/category" element={<CategoryManager />} />          
+          <Route path="admin/subcategory" element={<SubcategoryManager />} />
+          <Route path="admin/products" element={<ProductManager />} />
+          <Route path="admin/create-product" element={<CreateProduct />} />
+          <Route path="admin/edit-product/:id" element={<EditProduct />} />
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </ThemeProvider>
+    </>
   );
 }
 

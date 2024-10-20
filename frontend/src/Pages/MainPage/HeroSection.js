@@ -1,35 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { Box, Typography, Card, CardMedia, CardContent, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { styled } from '@mui/system';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
-// Example images for the carousel
-const images = [
-  { id: 1, src: 'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/2ea57ef59b0820b3.jpg?q=20' },
-  { id: 2, src: 'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/dff6511cbf3c625e.jpg?q=20' },
-  { id: 3, src: 'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/8f0276d685199540.jpg?q=20' },
-  { id: 4, src: 'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/a81653ffec97986c.jpg?q=20' },
-  { id: 5, src: 'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/8f0276d685199540.jpg?q=20' },
-];
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-
-const products = [
-  { id: 1, name: 'Dress', image: 'https://www.polyestermfg.com/wp-content/uploads/2021/11/Fabric-Finishing-Process%EF%BC%881%EF%BC%89-2.jpg' },
-  { id: 2, name: 'Toys', image: 'https://cdn.firstcry.com/education/2022/11/06094158/Toy-Names-For-Kids.jpg' },
-  { id: 3, name: 'Stationary', image: 'https://5.imimg.com/data5/RD/XV/MY-18339614/all-stationery-office.png' },
-  { id: 4, name: 'Fancy Items', image: 'https://c8.alamy.com/comp/J39J2H/st-ives-cornwall-uk-april-3-2017-colourful-homeware-items-for-sale-J39J2H.jpg' },
-  { id: 5, name: 'Riders', image: 'https://media.istockphoto.com/id/677022004/photo/outfit-of-biker-and-accessories-with-copy-space.jpg?s=612x612&w=0&k=20&c=yV4GrjZeIvsfic7-b8nHzk61mEbaOrjsAluQEEVRjMo=' },
-  { id: 6, name: 'New Born Kid', image: 'https://www.shutterstock.com/image-photo/flat-lay-baby-sleep-accessories-600nw-2187497703.jpg' },
-  { id: 7, name: 'Books', image: 'https://st2.depositphotos.com/1105977/5461/i/450/depositphotos_54615585-stock-photo-old-books-on-wooden-table.jpg' },
-];
-
-
+// Styled components
 const CarouselContainer = styled(Box)({
   position: 'relative',
   height: 'auto',
-  borderRadius:'8px', 
+  borderRadius: '8px',
   overflow: 'hidden',
   display: 'flex',
   alignItems: 'center',
@@ -40,11 +23,11 @@ const CarouselContainer = styled(Box)({
 const CarouselContent = styled(Box)(({ images }) => ({
   display: 'flex',
   transition: 'transform 0.5s ease-in-out',
-  width: `${images.length * 100}%`, // Use images.length instead of numimages
+  width: `${images.length * 100}%`,
 }));
 
 const CarouselImage = styled('img')({
-  width: '100%', 
+  width: '100%',
   height: '100%',
   objectFit: 'cover',
 });
@@ -58,13 +41,14 @@ const DotContainer = styled(Box)({
   gap: 8,
 });
 
-const Dot = styled(Box)(({ active }) => ({
+const Dot = styled(({ active, onClick, ...props }) => (
+  <Box {...props} onClick={onClick} />
+))(({ active }) => ({
   width: 10,
   height: 10,
   borderRadius: '50%',
   backgroundColor: active ? 'white' : 'rgba(255, 255, 255, 0.5)',
   transition: 'background-color 0.3s ease',
-  // Remove `active` prop from DOM element
 }));
 
 const Carousel = ({ images }) => {
@@ -88,57 +72,80 @@ const Carousel = ({ images }) => {
 
   return (
     <CarouselContainer>
-    <CarouselContent ref={containerRef} images={images}>
-      {images.map((image) => (
-        <Box key={image.id} sx={{ flex: '0 0 auto', width: '100%' }}>
-          <CarouselImage src={image.src} alt={`Image ${image.id}`} />
-        </Box>
-      ))}
-    </CarouselContent>
-    <DotContainer>
-      {images.map((_, index) => (
-        <Dot key={index} active={index === currentIndex} />
-      ))}
-    </DotContainer>
-  </CarouselContainer>
+      <CarouselContent ref={containerRef} images={images}>
+        {images.map((image) => (
+          <Box key={image.id} sx={{ flex: '0 0 auto', width: '100%' }}>
+            <CarouselImage src={image.src} alt={`Image ${image.id}`} />
+          </Box>
+        ))}
+      </CarouselContent>
+      <DotContainer>
+        {images.map((_, index) => (
+          <Dot
+            key={index}
+            active={index === currentIndex}
+            onClick={() => setCurrentIndex(index)} // Update currentIndex on dot click
+          />
+        ))}
+      </DotContainer>
+    </CarouselContainer>
   );
 };
 
 // ProductCard component
 const ProductCard = ({ product }) => (
   <Link to={`/${product.name.replace(/\s+/g, '-').toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-  <Card
-    sx={{
-      mr: 2,
-      boxShadow: 2,
-      mb: 1,
-      borderRadius: 2,
-      overflow: 'auto',
-      flex: '0 0 auto',
-      width: '300px',
-      '&:hover': {
-        boxShadow: 4,
-      },
-    }}
-  >
-    <CardMedia
-      component="img"
-      height="150"
-      image={product.image}
-      alt={product.name}
-    />
-    <CardContent>
-      <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans' }} noWrap>
-        {product.name}
-      </Typography>
-    </CardContent>
-  </Card>
+    <Card
+      sx={{
+        mr: 2,
+        boxShadow: 2,
+        mb: 1,
+        borderRadius: 2,
+        overflow: 'auto',
+        flex: '0 0 auto',
+        width: '300px',
+        '&:hover': {
+          boxShadow: 4,
+        },
+      }}
+    >
+      <CardMedia
+        component="img"
+        height="150"
+        image={product.image}
+        alt={product.name}
+      />
+      <CardContent>
+        <Typography variant="h6" sx={{ fontFamily: 'Nunito Sans' }} noWrap>
+          {product.name}
+        </Typography>
+      </CardContent>
+    </Card>
   </Link>
 );
 
 // HomePage component
 const HomePage = () => {
   const scrollContainerRef = useRef(null);
+  const [sliderImages, setSliderImages] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  // Fetching slider and product data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sliderResponse = await axios.get(`${BACKEND_URL}/slider`);
+        setSliderImages(sliderResponse.data.sliders);
+
+        const productResponse = await axios.get(`${BACKEND_URL}/category`);
+        setProducts(productResponse.data.categories);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const scrollLeft = () => {
     const container = scrollContainerRef.current;
@@ -162,7 +169,7 @@ const HomePage = () => {
 
   return (
     <Box>
-      <Carousel images={images} />
+      <Carousel images={sliderImages.map(slider => ({ id: slider._id, src: slider.imageUrl }))} />
       <Box
         sx={{
           position: 'relative',
@@ -207,16 +214,16 @@ const HomePage = () => {
               display: 'flex',
               flexWrap: 'nowrap',
               alignItems: 'center',
-              overflowX: 'auto', // Enable horizontal scrolling
+              overflowX: 'auto',
               scrollBehavior: 'smooth',
               width: '100%',
               '&::-webkit-scrollbar': {
-                display: 'none', // Hide scrollbar for Webkit browsers
+                display: 'none',
               },
             }}
           >
             {products.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product._id} product={{ id: product._id, name: product.name, image: product.imageUrl }} />
             ))}
           </Box>
           <IconButton onClick={scrollRight} sx={{ zIndex: 2, backgroundColor: "#e6edf7", color: 'navy' }}>

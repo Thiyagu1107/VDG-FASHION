@@ -33,10 +33,9 @@ const Login = () => {
         setAuth({ user: res.data.user, token: res.data.token });
         Cookies.set('auth', JSON.stringify(res.data), { expires: 1 }); // Expires in 1 day
 
-        const dashboardRoute = `/dashboard/${res.data.user.role === 1 ? "admin" : "user"}`;
         toast.success(res.data.message);
         setTimeout(() => {
-          navigate(location.state || dashboardRoute);
+          navigate(location.state || "/");
         }, 500); 
       } else {
         toast.error(res.data.error || res.data.message);

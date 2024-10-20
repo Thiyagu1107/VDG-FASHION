@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-
+import { Drawer, List, ListItem, ListItemText } from '@mui/material';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,44 +61,37 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const { auth, setAuth } = useAuth();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const navigate = useNavigate();
-  
-  // State for cart items
-  const [cartItems, setCartItems] = React.useState(0); // Initialize with the number of items in the cart
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [cartItems, setCartItems] = React.useState(0);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleLogout = () => {
-    setAuth({
-      ...auth,
-      user: null,
-      token: '',
-    });
-
-    Cookies.remove('auth'); // Clear auth cookie
-    handleMenuClose(); // Close the menu
-
+    setAuth({ user: null, token: '' });
+    Cookies.remove('auth');
+    handleMenuClose();
     toast.success('Logout Successfully');
     setTimeout(() => {
-      navigate("/login"); // Redirect to home page
+      navigate("/login");
     }, 500);
   };
 
   const handleMenuClose = (route) => {
     setAnchorEl(null);
-    
-    if (typeof route === 'string') {
-        navigate(route === 'dashboard' ? (auth.user.role === 1 ? '/dashboard/admin' : '/dashboard/user') : route);
+    if (route) {
+      const targetRoute = route === 'dashboard'
+        ? (auth.user?.role === 1 ? '/dashboard/admin' : '/dashboard/user')
+        : route;
+      navigate(targetRoute);
     }
   };
-
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -107,22 +100,44 @@ export default function Header() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const drawerItems = auth.user?.role === 1
+    ? [
+      { text: 'Home', path: '/' },
+      { text: 'Dashboard', path: '/dashboard/admin' },
+      { text: 'Slider', path: '/dashboard/admin/slider' },
+      { text: 'Category', path: '/dashboard/admin/category' },
+      { text: 'Sub Category', path: '/dashboard/admin/subcategory' },
+      { text: 'Products', path: '/dashboard/admin/products' },
+    ]
+    : auth.user?.role === 0
+    ? [
+      { text: 'Profile', path: '/profile' },
+      { text: 'Order', path: '/order' },
+    ]
+    : [];
+
   const renderMenu = (
     <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-        {auth && auth.user ? [
-      <MenuItem key="dashboard" onClick={() => handleMenuClose('dashboard')}>Dashboard</MenuItem>,
-      <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
-    ] : (
+    anchorEl={anchorEl}
+    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+    keepMounted
+    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+    open={isMenuOpen}
+    onClose={() => handleMenuClose(null)} 
+  >
+    {auth && auth.user ? (
+      [
+        <MenuItem key="dashboard" onClick={() => handleMenuClose('dashboard')}>Dashboard</MenuItem>,
+        <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+      ]
+    ) : (
       <MenuItem key="login" onClick={() => handleMenuClose('/login')}>My account</MenuItem>
     )}
-    </Menu>
+  </Menu> 
   );
 
   const renderMobileMenu = (
@@ -151,11 +166,35 @@ export default function Header() {
     </Menu>
   );
 
+  const renderDrawer = (
+    <Drawer
+      anchor="left"
+      open={drawerOpen}
+      onClose={toggleDrawer}
+      sx={{
+        '& .MuiDrawer-paper': {
+          width: '15%',
+        },
+      }}
+    >
+      <List>
+        {drawerItems.map((item, index) => (
+          <ListItem button key={index} onClick={() => {
+            navigate(item.path);
+            toggleDrawer(); 
+          }}>
+            <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+    </Drawer>
+  );
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ backgroundColor: 'white', color: 'navy' }}>
         <Toolbar>
-          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
           <img src={logo} alt="VDG Fashion" style={{ width: '90px', height: 'auto', marginRight: '10px' }} />
@@ -172,7 +211,7 @@ export default function Header() {
                 <ShoppingCartIcon />
               </Badge>
             </IconButton>
-            <IconButton size="large" edge="end" aria-label="account of current user" aria-controls="primary-search-account-menu" onClick={handleProfileMenuOpen} color="inherit">
+            <IconButton size="large" edge="end" aria-label="account of current user" onClick={handleProfileMenuOpen} color="inherit">
               <AccountCircle />
               <Typography variant="body1" sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.87)' }}>
                 Hello, {auth?.user?.name}
@@ -188,6 +227,7 @@ export default function Header() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      {renderDrawer}
     </Box>
   );
 }

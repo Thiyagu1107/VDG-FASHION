@@ -70,11 +70,11 @@ export const updateSubCategoryController = async (req, res) => {
 
 export const SubcategoryController = async (req, res) => {
     try {
-        const categories = await subcategoryModel.find({});
+        const subcategories = await subcategoryModel.find({});
         res.status(200).send({
             success: true,
             message: 'All Sub-categories retrieved successfully',
-            categories,
+            subcategories,
         });
     } catch (error) {
         console.error(error);

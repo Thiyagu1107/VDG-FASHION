@@ -12,39 +12,70 @@ const auth = new JWT({
     scopes: ['https://www.googleapis.com/auth/drive.file'],
 });
 
-
 export const uploadImageToDrive = async (fileBuffer, originalname, mimeType, folderId) => {
-    // console.log('Uploading image...');
-    // console.log('Original Name:', originalname);
-    // console.log('MIME Type:', mimeType);
-    
-    try {
-        // Create a readable stream from the buffer
-        const bufferStream = new Readable();
-        bufferStream.push(fileBuffer);
-        bufferStream.push(null); // Signifies the end of the stream
+    const maxRetries = 5;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            const bufferStream = new Readable();
+            bufferStream.push(fileBuffer);
+            bufferStream.push(null); // End of stream
 
-        const driveResponse = await drive.files.create({
-            requestBody: {
-                name: originalname,
-                mimeType: mimeType,
-                parents: [folderId ||process.env.GOOGLE_DRIVE_FOLDER_ID],
-            },
-            media: {
-                mimeType: mimeType,
-                body: bufferStream,
-            },
-            fields: 'id',
-            auth,
-        });
+            const driveResponse = await drive.files.create({
+                requestBody: {
+                    name: originalname,
+                    mimeType: mimeType,
+                    parents: [folderId || process.env.GOOGLE_DRIVE_FOLDER_ID],
+                },
+                media: {
+                    mimeType: mimeType,
+                    body: bufferStream,
+                },
+                fields: 'id',
+                auth,
+            });
 
-        const fileId = driveResponse.data.id;
-        const imageUrl = `https://drive.google.com/uc?id=${fileId}`;
-        // console.log('Image uploaded successfully. File ID:', fileId);
-        // console.log('Image URL:', imageUrl);
-        return imageUrl;
-    } catch (error) {
-        console.error('Error uploading image:', error.message);
-        throw new Error('Error uploading image: ' + error.message);
+            const fileId = driveResponse.data.id;
+            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w10000`;
+        } catch (error) {
+            if (error.code === 429) {
+                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+                console.log(`Rate limited. Waiting for ${waitTime} ms before retrying...`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+                console.error('Error uploading image:', error.message);
+                throw error;
+            }
+        }
     }
+    throw new Error('Max retries reached for uploading image');
+};
+
+export const deleteImageFromDrive = async (imageUrl) => {
+    const match = imageUrl.match(/id=([^&]+)/);
+    if (!match) {
+        throw new Error('Invalid image URL: unable to extract file ID');
+    }
+    const fileId = match[1];
+
+    const maxRetries = 5;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            await drive.files.delete({
+                fileId,
+                auth,
+            });
+            console.log('Image deleted successfully.');
+            return;
+        } catch (error) {
+            if (error.code === 429) {
+                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+                console.log(`Rate limited. Waiting for ${waitTime} ms before retrying...`);
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+                console.error('Error deleting image:', error.message);
+                throw error;
+            }
+        }
+    }
+    throw new Error('Max retries reached for deleting image');
 };

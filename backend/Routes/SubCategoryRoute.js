@@ -8,7 +8,7 @@ router.post('/', requireSignIn, isAdmin, createSubCategoryController);
 router.put('/:id',requireSignIn, isAdmin, updateSubCategoryController);
 router.get('/', SubcategoryController);
 router.get('/:id', singleSubCategoryController);
-router.delete(':id', requireSignIn, isAdmin, deleteSubCategoryController);
+router.delete('/:id', requireSignIn, isAdmin, deleteSubCategoryController);
 
 
 
