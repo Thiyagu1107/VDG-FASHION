@@ -167,11 +167,10 @@ const CategoryManager = () => {
 
   return (
     <Layout>
-      <Box sx={{ backgroundColor: 'white', padding: 3, borderRadius: 2, width: '90%', margin: '0 auto' }}>
-        <Typography variant="h5" gutterBottom>Category Manager
-        </Typography>
+      <Box sx={{ backgroundColor: 'white', padding: 3, borderRadius: 2, width: { xs: '100%', sm: '90%' }, margin: '0 auto' }}>
+        <Typography variant="h5" gutterBottom>Category Manager</Typography>
         <Grid container spacing={2} sx={{ marginBottom: 2 }} alignItems="center">
-          <Grid item xs={8} sm={7}>
+          <Grid item xs={12} sm={8}>
             <TextField
               label="Category Name"
               variant="outlined"
@@ -182,7 +181,7 @@ const CategoryManager = () => {
               helperText={!categoryName && !editingCategoryId ? 'Category Name is required.' : ''}
             />
           </Grid>
-          <Grid item xs={4} sm={2}>
+          <Grid item xs={12} sm={4} container justifyContent="space-between">
             <input
               type="file"
               accept=".jpg,.png"
@@ -195,25 +194,25 @@ const CategoryManager = () => {
                 Upload
               </Button>
             </label>
-          </Grid>
-          <Grid item xs={12} sm={3} container justifyContent="flex-end">
-            <Button variant="outlined" onClick={resetImageState} disabled={!croppedImage || loading} sx={{ marginRight: 1 }}>
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={loading || (editingCategoryId ? !categoryName : !croppedImage)}
-            >
-              {loading ? <CircularProgress size={24} /> : (editingCategoryId ? 'Update' : 'Submit')}
-            </Button>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
+              <Button variant="outlined" onClick={resetImageState} disabled={!croppedImage || loading} sx={{ marginRight: { sm: 1, xs: 0 }, marginBottom: { xs: 1, sm: 0 } }}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading || (editingCategoryId ? !categoryName : !croppedImage)}
+              >
+                {loading ? <CircularProgress size={24} /> : (editingCategoryId ? 'Update' : 'Submit')}
+              </Button>
+            </Box>
           </Grid>
         </Grid>
 
         {image && (
           <Grid container spacing={2} sx={{ marginTop: 2 }} justifyContent="center">
             <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Box sx={{ position: 'relative', height: '400px', width: '400px', backgroundColor: 'transparent' }}>
+              <Box sx={{ position: 'relative', height: '300px', width: '300px', backgroundColor: 'transparent' }}>
                 <Cropper
                   image={image}
                   crop={crop}
@@ -229,7 +228,7 @@ const CategoryManager = () => {
             {croppedImage && (
               <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                  <img src={croppedImage} alt="Cropped" style={{ width: '600px', height: '400px', border: '2px solid #1976d2', borderRadius: '4px' }} />
+                  <img src={croppedImage} alt="Cropped" style={{ width: '100%', height: 'auto', border: '2px solid #1976d2', borderRadius: '4px' }} />
                 </Box>
               </Grid>
             )}

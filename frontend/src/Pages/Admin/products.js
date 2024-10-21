@@ -11,7 +11,10 @@ import {
   Paper,
   Typography,
   TablePagination,
+  IconButton,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../../Components/Layout';
@@ -20,7 +23,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ProductManager = () => {
   const [products, setProducts] = useState([]);
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'; // Provide a default URL
   const navigate = useNavigate();
 
   // Pagination state
@@ -30,7 +33,11 @@ const ProductManager = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/product/all`);
-      setProducts(response.data.products || []);
+      if (response.data && response.data.products) {
+        setProducts(response.data.products);
+      } else {
+        toast.error('No products found.');
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error('Error fetching products.');
@@ -39,7 +46,7 @@ const ProductManager = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [BACKEND_URL]);
+  }, []); // Removed BACKEND_URL from dependency array
 
   const handleDelete = async (id) => {
     try {
@@ -99,35 +106,48 @@ const ProductManager = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {displayedProducts.map((prod, index) => (
-                <TableRow key={prod._id}>
-                  <TableCell>{page * rowsPerPage + index + 1}</TableCell>
-                  <TableCell>{prod.name}</TableCell>
-                  <TableCell>{prod.description}</TableCell>
-                  <TableCell>{prod.price}</TableCell>
-                  <TableCell>{prod.saleprice}</TableCell>
-                  <TableCell>{prod.gender}</TableCell>
-                  <TableCell>
-                    {prod.imageUrl ? (
-                      <img src={prod.imageUrl} alt={prod.name} style={{ width: '100px', height: 'auto' }} />
-                    ) : ( 
-                      'No Image'
-                    )}
-                  </TableCell>
-                  <TableCell>{prod.isactive ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>
-                    <Button variant="outlined" onClick={() => handleEdit(prod._id)}>Edit</Button>
-                    <Button 
-                      variant="outlined" 
-                      color="error" 
-                      onClick={() => handleDelete(prod._id)} 
-                      sx={{ marginLeft: 1 }}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
+              {displayedProducts.length > 0 ? (
+                displayedProducts.map((prod, index) => (
+                  <TableRow key={prod._id}>
+                    <TableCell>{page * rowsPerPage + index + 1}</TableCell>
+                    <TableCell>{prod.name}</TableCell>
+                    <TableCell>{prod.description}</TableCell>
+                    <TableCell>{prod.price}</TableCell>
+                    <TableCell>{prod.saleprice}</TableCell>
+                    <TableCell>{prod.gender}</TableCell>
+                    <TableCell>
+                      {prod.imageUrl ? (
+                        <img src={prod.imageUrl} alt={prod.name} style={{ width: '100px', height: 'auto' }} />
+                      ) : ( 
+                        'No Image'
+                      )}
+                    </TableCell>
+                    <TableCell>{prod.isactive ? 'Yes' : 'No'}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <IconButton 
+                          color="primary" 
+                          onClick={() => handleEdit(prod._id)} 
+                          sx={{ '&:hover': { transform: 'scale(1.1)' } }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton 
+                          color="error" 
+                          onClick={() => handleDelete(prod._id)} 
+                          sx={{ marginLeft: 1, '&:hover': { transform: 'scale(1.1)' } }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">No products available.</TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -142,7 +162,7 @@ const ProductManager = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
 
-    <ToastContainer />
+        <ToastContainer />
       </Box>
     </Layout>
   );

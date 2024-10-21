@@ -84,7 +84,7 @@ const Carousel = ({ images }) => {
           <Dot
             key={index}
             active={index === currentIndex}
-            onClick={() => setCurrentIndex(index)} // Update currentIndex on dot click
+            onClick={() => setCurrentIndex(index)}
           />
         ))}
       </DotContainer>
@@ -94,7 +94,7 @@ const Carousel = ({ images }) => {
 
 // ProductCard component
 const ProductCard = ({ product }) => (
-  <Link to={`/${product.name.replace(/\s+/g, '-').toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+  <Link to={`/products?categoryId=${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
     <Card
       sx={{
         mr: 2,

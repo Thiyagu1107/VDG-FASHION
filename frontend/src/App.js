@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
+
 const LoaderWrapper = styled('div')({
   position: 'fixed',
   top: 0,
@@ -47,6 +48,10 @@ const ProductManager = Loadable(React.lazy(() => import("./Pages/Admin/products"
 const CreateProduct = Loadable(React.lazy(() => import("./Pages/Admin/CreateProduct")));
 const EditProduct = Loadable(React.lazy(() => import("./Pages/Admin/EditProduct")));
 
+
+const Product = Loadable(React.lazy(() => import("./Pages/ProductsPage/Product")));
+
+
 function App() {
   return (  
     <>
@@ -57,6 +62,8 @@ function App() {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<PageNotFound />} />
+
+        <Route path="/products" element={<Product />} />
         
         <Route path="/dashboard" element={<PrivateRoute />}>
           <Route path="user" element={<UserDashboard />} />

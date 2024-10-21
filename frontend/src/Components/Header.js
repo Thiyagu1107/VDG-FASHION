@@ -79,7 +79,7 @@ export default function Header() {
     handleMenuClose();
     toast.success('Logout Successfully');
     setTimeout(() => {
-      navigate("/login");
+      navigate("/");
     }, 500);
   };
 
@@ -173,7 +173,10 @@ export default function Header() {
       onClose={toggleDrawer}
       sx={{
         '& .MuiDrawer-paper': {
-          width: '15%',
+          width: {
+            xs: '50%', // 40% width on small screens
+            sm: '15%', // 15% width on larger screens
+          },
         },
       }}
     >

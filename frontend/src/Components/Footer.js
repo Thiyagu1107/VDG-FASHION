@@ -1,5 +1,3 @@
-// src/components/Footer.js
-
 import React from 'react';
 import { Container, Grid, Typography, Link, Box } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
@@ -15,7 +13,7 @@ const Footer = () => {
               About Us
             </Typography>
             <Typography variant="body2">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Welcome to VDG Fashion, your premier destination for stylish dresses, toys, and riders. Our showroom offers an extensive collection of high-quality products, curated with love and passion.
             </Typography>
           </Grid>
 
@@ -24,9 +22,9 @@ const Footer = () => {
             <Typography variant="h6" gutterBottom>
               Vision and Mission
             </Typography>
-            <Typography variant="body2">
-              Our vision is to create innovative solutions. Our mission is to deliver high-quality services that exceed our customers’ expectations.
-            </Typography>
+            <Typography variant="body2">- Deliver exceptional quality products</Typography>
+            <Typography variant="body2">- Provide outstanding customer service</Typography>
+            <Typography variant="body2">- Build lasting relationships</Typography>
           </Grid>
 
           {/* Founder Details */}
@@ -35,7 +33,7 @@ const Footer = () => {
               Founder Details
             </Typography>
             <Typography variant="body2">
-              John Doe - CEO & Founder. With over 20 years of experience, John leads the company with a vision to innovate and inspire.
+              Iswariah Sankararajan, Founder of VDG Fashion, is driven by a passion for delivering exceptional customer experiences. With years of expertise in the industry, Iswariah's vision is to provide unique, affordable, and high-quality products that bring joy to our customers.
             </Typography>
           </Grid>
 
@@ -45,10 +43,11 @@ const Footer = () => {
               Contact Us
             </Typography>
             <Typography variant="body2">
-              Email: <Link href="mailto:contact@company.com">contact@company.com</Link>
+              Email: <Link href="mailto:Vdgfashion6@gmail.com">Vdgfashion6@gmail.com</Link>
             </Typography>
+            <Typography variant="body2">Phone: +91 8300112996</Typography>
             <Typography variant="body2">
-              Phone: +123 456 7890
+              Address: 161/1, Narayana Mall, First Floor, Municipal Office Road, near Karumathi Madam Signal, Virudhunagar 626001
             </Typography>
           </Grid>
 
@@ -58,26 +57,21 @@ const Footer = () => {
               Follow Us
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Link href="https://facebook.com" color="inherit" aria-label="Facebook">
+              <Link href="https://facebook.com" color="inherit" aria-label="Follow us on Facebook">
                 <Facebook />
               </Link>
-              <Link href="https://twitter.com" color="inherit" aria-label="Twitter">
+              <Link href="https://twitter.com" color="inherit" aria-label="Follow us on Twitter">
                 <Twitter />
               </Link>
-              <Link href="https://instagram.com" color="inherit" aria-label="Instagram">
+              <Link href="https://instagram.com" color="inherit" aria-label="Follow us on Instagram">
                 <Instagram />
               </Link>
-              <Link href="https://linkedin.com" color="inherit" aria-label="LinkedIn">
+              <Link href="https://linkedin.com" color="inherit" aria-label="Follow us on LinkedIn">
                 <LinkedIn />
               </Link>
             </Box>
           </Grid>
         </Grid>
-        {/* <Box sx={{ mt: 4, textAlign: 'center' }}>
-          <Typography variant="body2" color="textSecondary">
-            Address: 1234 Street Name, City, Country
-          </Typography>
-        </Box> */}
       </Container>
     </Box>
   );

@@ -126,12 +126,30 @@ export const productController = async (req, res) => {
         });
     }
 };
+
 export const productControlleruser = async (req, res) => {
     try {
-        const products = await Product.find({ isactive: true }); 
+        const { categoryId, subcategoryId, gender } = req.query;
+
+        const query = { isactive: true };
+
+        if (categoryId) {
+            query.category = categoryId;
+        }
+
+        if (subcategoryId) {
+            query.subcategory = subcategoryId; 
+        }
+
+        if (gender) {
+            query.gender = gender;
+        }
+
+        const products = await Product.find(query);
+
         res.status(200).send({
             success: true,
-            message: 'All active products retrieved successfully',
+            message: 'Active products retrieved successfully',
             products,
         });
     } catch (error) {
@@ -139,10 +157,11 @@ export const productControlleruser = async (req, res) => {
         res.status(500).send({
             success: false,
             message: 'An error occurred while retrieving products',
-            error: error.message
+            error: error.message,
         });
     }
 };
+
 
 // Get single product
 export const singleProductController = async (req, res) => {
